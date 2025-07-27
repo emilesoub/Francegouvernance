@@ -1,0 +1,49 @@
+# On dit à Gitpod d'utiliser notre boîte à outils personnalisée.
+image:
+  file:.gitpod.Dockerfile
+
+# On configure les "portes" de communication de notre application.
+ports:
+  # Porte pour l'API REST (pour envoyer des requêtes à la blockchain)
+  - name: API-REST
+    port: 1317
+    onOpen: ignore
+    visibility: public
+  # Porte pour gRPC (communication haute performance)
+  - name: gRPC
+    port: 9090
+    onOpen: ignore
+    visibility: public
+  # Porte pour le RPC (communication de bas niveau)
+  - name: RPC
+    port: 26657
+    onOpen: ignore
+    visibility: public
+
+# On définit la liste des tâches à exécuter.
+tasks:
+  - name: Blockchain Setup & Run
+    # 'init' : Tâches de préparation (exécutées en arrière-plan avant même que vous n'ouvriez le projet)
+    init: |
+      # On vérifie si le squelette de la blockchain existe déjà pour ne pas le recréer inutilement.
+      if [! -f ".scaffolded" ]; then
+        echo "Création du squelette de la blockchain 'mychain'..."
+        # On crée la structure de base de la blockchain.
+        ignite scaffold chain mychain --address-prefix mychain
+        # On crée un fichier "marqueur" pour savoir que c'est fait.
+        touch.scaffolded
+      else
+        echo "La blockchain est déjà créée. On passe cette étape."
+      fi
+      
+      # On va dans le dossier de la blockchain et on installe les dépendances.
+      cd mychain
+      echo "Installation des dépendances Go..."
+      go mod tidy
+      
+    # 'command' : Tâche principale (exécutée quand vous ouvrez le projet)
+    command: |
+      # On va dans le dossier de la blockchain.
+      cd mychain
+      # On démarre le serveur de la blockchain.
+      ignite chain serve
