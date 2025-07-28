@@ -1,5 +1,5 @@
 # On part d'une image de base fournie par Gitpod, qui contient déjà plein d'outils utiles.
-FROM gitpod/workspace-full:latest
+From gitpod/workspace-full:latest
 
 # On passe temporairement en mode "administrateur" pour installer des logiciels.
 USER root
